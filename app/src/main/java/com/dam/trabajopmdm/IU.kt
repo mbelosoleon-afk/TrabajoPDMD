@@ -1,5 +1,6 @@
 package com.dam.trabajopmdm
 
+import android.content.Context
 import android.health.connect.datatypes.ExerciseCompletionGoal.ActiveCaloriesBurnedGoal
 import android.nfc.Tag
 import android.util.Log
@@ -27,6 +28,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
@@ -114,5 +116,9 @@ fun IU(miViewModel: MiViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun IUPreview(){
-    IU(miViewModel = MiViewModel())
+    //Obtiene el contexto actual
+    val context = LocalContext.current
+    //Pasa el contexto al constructor MiViewModel
+    IU(miViewModel = MiViewModel(context))
+
 }
