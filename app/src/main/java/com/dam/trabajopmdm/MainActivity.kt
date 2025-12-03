@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Creamos el ViewModel pasando el contexto de la app
-        val miViewModel: MiViewModel = MiViewModel(applicationContext)
+        val miViewModel: MiViewModel = MiViewModel(application)
         enableEdgeToEdge()
         setContent {
             IU(miViewModel)

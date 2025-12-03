@@ -1,5 +1,6 @@
 package com.dam.trabajopmdm
 
+import android.app.Application
 import android.content.Context
 import android.health.connect.datatypes.ExerciseCompletionGoal.ActiveCaloriesBurnedGoal
 import android.nfc.Tag
@@ -116,9 +117,5 @@ fun IU(miViewModel: MiViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun IUPreview(){
-    //Obtiene el contexto actual
-    val context = LocalContext.current
-    //Pasa el contexto al constructor MiViewModel
-    IU(miViewModel = MiViewModel(context))
-
+    IU(miViewModel = MiViewModel(application = Application()))
 }

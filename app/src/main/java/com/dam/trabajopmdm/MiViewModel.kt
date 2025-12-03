@@ -1,10 +1,12 @@
 package com.dam.trabajopmdm
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.util.packInts
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -16,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.processNextEventInCurrentThread
 //Metemos el context en el constructor
-class MiViewModel(private val context: Context): ViewModel() {
+class MiViewModel(application: Application): AndroidViewModel(application) {
     // variable estados del juego
     val estadoActual: MutableStateFlow<Estados> = MutableStateFlow(Estados.INICIO)
 
@@ -24,10 +26,19 @@ class MiViewModel(private val context: Context): ViewModel() {
     var _numbers = mutableStateOf(0)
 
     //variable puntuacion
-    val puntuacion = MutableStateFlow<Int?>(0)
+    val puntuacion = MutableStateFlow<Int>(0)
 
     //variable record con el metodo cargarRecord(), para obtener el valor
-    val record = MutableStateFlow<Int>(cargarRecord())
+    val record = MutableStateFlow<Int>(0)
+    init {
+        // mostramos el record guardado
+        Log.d("_PREF", "Record guardado: ${obtenerRecord()}")
+        // mandamos un record al ViewModel
+        // el ViewModel decide si es o no record
+        // este valor lo podemos ir cambiando para observar si actualiza o no el record
+        //ControladorPreference.actualizarRecord(context = getApplication(), nuevoRecord = 0)
+        record.value = obtenerRecord()
+    }
 
     //variable ronda
     var ronda = MutableStateFlow<Int>(1)
@@ -66,12 +77,12 @@ class MiViewModel(private val context: Context): ViewModel() {
             if (Datos.numero.size == posicion) {
                 cambiarRonda()
             }
-            puntuacion.value = puntuacion.value?.plus(1)
+            puntuacion.value = puntuacion.value.plus(1)
 
             true
         }else{
             Log.d("ViewModel","ERROR, HAS PERDIDO")
-            derrota()
+            derrota(puntuacion.value)
             false
         }
     }
@@ -80,12 +91,10 @@ class MiViewModel(private val context: Context): ViewModel() {
         ronda.value = ronda.value.plus(1)
         numeroRandom()
     }
-    fun derrota(){
-        //Cmprueba si la puntuacion supera al record, lo guarda en el viewModel
-        //y guarda el nuevo valor en el sharedPreferences
-        if(puntuacion.value!! > record.value){
-            record.value = puntuacion.value!!
-            guardarRecord(record.value)
+    fun derrota(posibleRecord: Int){
+        if(posibleRecord > obtenerRecord()){
+            ControladorPreference.actualizarRecord(getApplication(), posibleRecord)
+            record.value = posibleRecord
         }
         puntuacion.value = 0
         posicion = 0
@@ -94,21 +103,10 @@ class MiViewModel(private val context: Context): ViewModel() {
         Datos.numero = ArrayList()
     }
 
-    //Funcion parar cargar datos del sharedPreferences,
-    fun cargarRecord(): Int {
-        //variable sharedPreference
-        val sharedPrefs = context.getSharedPreferences("SimonDice", Context.MODE_PRIVATE)
-        //Cargamos el número, si este no existe, el valor es 0
-        return sharedPrefs.getInt("HighScore",0)
+    fun obtenerRecord(): Int {
+        record.value =  ControladorPreference.obtenerRecord(getApplication())
+        Log.d("_PREF", "Record: ${(record.value)}")
+        return record.value
     }
 
-    //Funcion para guardar el record en sharedPreferences
-    fun guardarRecord(nuevoRecord: Int){
-        val sharedPrefs = context.getSharedPreferences("SimonDice", Context.MODE_PRIVATE)
-        with (sharedPrefs.edit()){
-            putInt("HigsScore", nuevoRecord)
-            apply() //Guarda de forma asíncrona
-        }
-    }
 }
-//DOCUMENTACIÓN: https://developer.android.com/training/data-storage/shared-preferences?hl=es-419#kotlin
