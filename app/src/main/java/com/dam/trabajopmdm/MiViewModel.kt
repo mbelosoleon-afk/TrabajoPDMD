@@ -1,8 +1,12 @@
 package com.dam.trabajopmdm
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.util.packInts
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -13,8 +17,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.processNextEventInCurrentThread
+import java.time.LocalDateTime
 
-class MiViewModel(): ViewModel() {
+//Metemos el context en el constructor
+class MiViewModel(application: Application): AndroidViewModel(application) {
     // variable estados del juego
     val estadoActual: MutableStateFlow<Estados> = MutableStateFlow(Estados.INICIO)
 
@@ -22,10 +28,28 @@ class MiViewModel(): ViewModel() {
     var _numbers = mutableStateOf(0)
 
     //variable puntuacion
-    val puntuacion = MutableStateFlow<Int?>(0)
+    val puntuacion = MutableStateFlow<Int>(0)
 
-    //variable record
+    //variable record con el metodo cargarRecord(), para obtener el valor
     val record = MutableStateFlow<Int>(0)
+    init {
+        // mostramos el record guardado
+        Log.d("_PREF", "Record guardado: ${obtenerRecord()}")
+        // mandamos un record al ViewModel
+        // el ViewModel decide si es o no record
+        // este valor lo podemos ir cambiando para observar si actualiza o no el record
+        //ControladorPreference.actualizarRecord(context = getApplication(), nuevoRecord = 0)
+        record.value = obtenerRecord()
+    }
+
+    val fechaHoraActual = MutableStateFlow<String>("")
+
+    init {
+        Log.d("_PREF","Fecha guardada: ${obtenerFecha()}")
+
+        //ControladorPreference.actualizarFecha(context = getApplication(), nuevaFecha = "")
+        fechaHoraActual.value = obtenerFecha().toString()
+    }
 
     //variable ronda
     var ronda = MutableStateFlow<Int>(1)
@@ -64,12 +88,12 @@ class MiViewModel(): ViewModel() {
             if (Datos.numero.size == posicion) {
                 cambiarRonda()
             }
-            puntuacion.value = puntuacion.value?.plus(1)
+            puntuacion.value = puntuacion.value.plus(1)
 
             true
         }else{
             Log.d("ViewModel","ERROR, HAS PERDIDO")
-            derrota()
+            derrota(puntuacion.value)
             false
         }
     }
@@ -78,9 +102,12 @@ class MiViewModel(): ViewModel() {
         ronda.value = ronda.value.plus(1)
         numeroRandom()
     }
-    fun derrota(){
-        if (record.value < puntuacion.value!!){
-            record.value = puntuacion.value!!
+    fun derrota(posibleRecord: Int){
+        if(posibleRecord > obtenerRecord()){
+            ControladorPreference.actualizarRecord(getApplication(), posibleRecord)
+            record.value = posibleRecord
+            fechaHoraActual.value = LocalDateTime.now().toString()
+            ControladorPreference.actualizarFecha(getApplication(), fechaHoraActual.value)
         }
         puntuacion.value = 0
         posicion = 0
@@ -88,4 +115,17 @@ class MiViewModel(): ViewModel() {
         estadoActual.value = Estados.INICIO
         Datos.numero = ArrayList()
     }
+
+    fun obtenerRecord(): Int {
+        record.value =  ControladorPreference.obtenerRecord(getApplication())
+        Log.d("_PREF", "Record: ${(record.value)}")
+        return record.value
+    }
+
+    fun obtenerFecha(): String {
+        fechaHoraActual.value = ControladorPreference.obtenerFecha(getApplication()).toString()
+        Log.d("_PREF", "Fecha: ${(fechaHoraActual.value)}")
+        return fechaHoraActual.value
+    }
+
 }
