@@ -17,6 +17,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.processNextEventInCurrentThread
+import java.time.LocalDateTime
+
 //Metemos el context en el constructor
 class MiViewModel(application: Application): AndroidViewModel(application) {
     // variable estados del juego
@@ -38,6 +40,15 @@ class MiViewModel(application: Application): AndroidViewModel(application) {
         // este valor lo podemos ir cambiando para observar si actualiza o no el record
         //ControladorPreference.actualizarRecord(context = getApplication(), nuevoRecord = 0)
         record.value = obtenerRecord()
+    }
+
+    val fechaHoraActual = MutableStateFlow<String>("")
+
+    init {
+        Log.d("_PREF","Fecha guardada: ${obtenerFecha()}")
+
+        //ControladorPreference.actualizarFecha(context = getApplication(), nuevaFecha = "")
+        fechaHoraActual.value = obtenerFecha().toString()
     }
 
     //variable ronda
@@ -95,6 +106,8 @@ class MiViewModel(application: Application): AndroidViewModel(application) {
         if(posibleRecord > obtenerRecord()){
             ControladorPreference.actualizarRecord(getApplication(), posibleRecord)
             record.value = posibleRecord
+            fechaHoraActual.value = LocalDateTime.now().toString()
+            ControladorPreference.actualizarFecha(getApplication(), fechaHoraActual.value)
         }
         puntuacion.value = 0
         posicion = 0
@@ -107,6 +120,12 @@ class MiViewModel(application: Application): AndroidViewModel(application) {
         record.value =  ControladorPreference.obtenerRecord(getApplication())
         Log.d("_PREF", "Record: ${(record.value)}")
         return record.value
+    }
+
+    fun obtenerFecha(): String {
+        fechaHoraActual.value = ControladorPreference.obtenerFecha(getApplication()).toString()
+        Log.d("_PREF", "Fecha: ${(fechaHoraActual.value)}")
+        return fechaHoraActual.value
     }
 
 }

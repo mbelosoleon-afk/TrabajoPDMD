@@ -1,12 +1,15 @@
 package com.dam.trabajopmdm
 
 import android.content.Context
+import android.icu.text.RelativeDateTimeFormatter
 import androidx.core.content.edit
 
 object ControladorPreference {
     private const val PREFS_NAME = "simondice_app"
 
     private const val KEY_RECORD = "record"
+
+    private const val KEY_FECHA = "fecha"
 
     fun actualizarRecord(context: Context, nuevoRecord: Int) {
         // Obtenemos las preferencias compartidas
@@ -23,5 +26,16 @@ object ControladorPreference {
         return sharedPreferences.getInt(KEY_RECORD, 0)
     }
 
+    fun actualizarFecha(context: Context, nuevaFecha: String) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putString(KEY_FECHA, nuevaFecha)
+        }
+    }
+
+    fun obtenerFecha(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(KEY_FECHA,"")
+    }
 
 }
