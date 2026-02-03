@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.room.Room
+import com.dam.trabajopmdm.Room.AppDatabase
 import com.dam.trabajopmdm.ui.theme.TrabajoPMDMTheme
 
 class MainActivity : ComponentActivity() {
