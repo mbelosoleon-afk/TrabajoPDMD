@@ -50,10 +50,12 @@ fun IU(miViewModel: MiViewModel) {
         val rondaObtenida by miViewModel.ronda.collectAsState()
         val recordObtenido by miViewModel.record.collectAsState()
         val estado by miViewModel.estadoActual.collectAsState()
+        //Recogemos la variable del nombre para mostrarla por pantalla
+        val nombre by miViewModel.nombreUsuario.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
             Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally){
-                Puntuacion(puntuacionObtenida, rondaObtenida, recordObtenido, estado)
+                Puntuacion(puntuacionObtenida, rondaObtenida, recordObtenido, estado, nombre)
                 Botonera(miViewModel)
                 Boton_Start(miViewModel)
             }
@@ -61,10 +63,10 @@ fun IU(miViewModel: MiViewModel) {
     }
 
     @Composable
-    fun Puntuacion(puntuacion: Int?, ronda: Int,record: Int, estados: Estados){
+    fun Puntuacion(puntuacion: Int?, ronda: Int,record: Int, estados: Estados, nombre: String){
         Text(text="Estado: $estados")
         Text(text="Ronda: $ronda")
-        Text(text="Puntuacion: $puntuacion\n Record: $record")
+        Text(text="Puntuacion: $puntuacion\n Record de $nombre: $record")
     }
     @Composable
     fun Boton(miViewModel: MiViewModel, enum_color: Colores) {

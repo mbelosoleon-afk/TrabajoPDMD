@@ -1,5 +1,6 @@
 package com.dam.trabajopmdm
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.room.Room
+import com.dam.trabajopmdm.Room.AppDatabase
 import com.dam.trabajopmdm.ui.theme.TrabajoPMDMTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,6 +26,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+val applicationContext: Context
+    get() {
+        TODO()
+    }
+val db = Room.databaseBuilder(
+    applicationContext,
+    AppDatabase::class.java, "database-name"
+)
+    .allowMainThreadQueries()
+    .build()
 
 @Preview(showBackground = true)
 @Composable
