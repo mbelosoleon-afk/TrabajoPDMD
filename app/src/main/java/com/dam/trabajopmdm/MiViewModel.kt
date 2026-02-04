@@ -33,6 +33,9 @@ class MiViewModel(): ViewModel() {
     //variable posicion
     var posicion = 0
 
+    //Variable para el nombre
+    var nombreUsuario = MutableStateFlow<String>("Juan")
+
     //Función para crear un número random
     fun numeroRandom(){
         estadoActual.value = Estados.GENERANDO

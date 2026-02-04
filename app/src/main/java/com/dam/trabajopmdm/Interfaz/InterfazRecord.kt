@@ -13,6 +13,6 @@ interface InterfazRecord{
     fun obtenerRecord(context: Context): Record
 
 
-    // Actualiza el record
-    fun actualizarRecord(context: Context, valorRecord: Int, valorData: Date): Int
+    // Actualiza el record ahora con el nombre del usuario
+    fun actualizarRecord(context: Context, valorRecord: Int, valorData: Date, valorNombre: String): Int
 }

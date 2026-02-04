@@ -11,6 +11,7 @@ import java.util.Date
  * ◦Crea y configura la base de datos.
  * ◦Usa el UserDao para ejecutar las acciones (leer, guardar, etc.).
  */
+//Le añadimos la variable del nombre
 class ControladorRooms(private val applicationContext: Context): InterfazRecord {
     // Esto sirve para crear la base de datos
     val db = Room.databaseBuilder(
@@ -30,6 +31,7 @@ class ControladorRooms(private val applicationContext: Context): InterfazRecord 
         if (userByRecord?.record != null){
             record.valorRecord = userByRecord.record!!
             record.fechaSuperacion = Date(userByRecord.fecha)
+            record.nombre = userByRecord.nombre!!
         }
 
         return record
@@ -38,11 +40,12 @@ class ControladorRooms(private val applicationContext: Context): InterfazRecord 
     override fun actualizarRecord(
         context: Context,
         valorRecord: Int,
-        valorData: Date
+        valorData: Date,
+        valorNombre: String
     ): Int {
         try {
             // Añade usuarios a la base
-            val newUser = User(null, valorRecord, valorData.toString()) // INSERT INTO user (uid, record) VALUES (1, 12)
+            val newUser = User(null, valorRecord, valorData.toString(),valorNombre) // INSERT INTO user (uid, record) VALUES (1, 12)
             userDao.insertAll(newUser)
 
             // Permite actualizar un usuario
