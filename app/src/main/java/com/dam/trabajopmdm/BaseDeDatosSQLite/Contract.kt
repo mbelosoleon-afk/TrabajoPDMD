@@ -23,7 +23,7 @@ object FeedReaderContract {
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                 "${FeedEntry.COLUMN_NAME_TITLE} TEXT," +
                 "${FeedEntry.COLUMN_NAME_SCORE} INTEGER," +
-                "${FeedEntry.COLUMN_NAME_DATE} INTEGER)" // Guardaremos la fecha  en Integer porque no funciona Data
+                "${FeedEntry.COLUMN_NAME_DATE} TEXT)" // Guardaremos la fecha  en Integer porque no funciona Data
 
 
     // Reinicia la base de datos

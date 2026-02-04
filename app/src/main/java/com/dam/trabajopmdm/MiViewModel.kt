@@ -9,10 +9,12 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.lifecycle.viewModelScope
 import com.dam.mvvm_basic.Datos
 import com.dam.mvvm_basic.Estados
+import com.dam.trabajopmdm.SQLiteControlador.ControladorSQLite
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.processNextEventInCurrentThread
+import java.time.LocalDateTime
 
 class MiViewModel(): ViewModel() {
     // variable estados del juego
@@ -32,6 +34,8 @@ class MiViewModel(): ViewModel() {
 
     //variable posicion
     var posicion = 0
+
+    var fecha: String = String()
 
     //Función para crear un número random
     fun numeroRandom(){
@@ -81,11 +85,17 @@ class MiViewModel(): ViewModel() {
     fun derrota(){
         if (record.value < puntuacion.value!!){
             record.value = puntuacion.value!!
+            fecha = LocalDateTime.now().toString()
+
         }
         puntuacion.value = 0
         posicion = 0
         ronda.value = 1
         estadoActual.value = Estados.INICIO
         Datos.numero = ArrayList()
+    }
+
+    fun guardarRecord(controladorSQLite: ControladorSQLite,record: Int, fecha: String){
+        controladorSQLite.guardarRecord(record, fecha)
     }
 }

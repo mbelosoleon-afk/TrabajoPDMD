@@ -19,7 +19,7 @@ class ControladorSQLite(context: Context) {
      * @param puntuacion La puntuación obtenida
      * @param fecha La fecha en milisegundos
      */
-    fun guardarRecord(puntuacion: Int, fecha: Long) {
+    fun guardarRecord(puntuacion: Int, fecha: String) {
         val db = dbHelper.writableDatabase
         // Nuevo registro a insertar en la base de datos
         val values = ContentValues().apply {
@@ -64,8 +64,7 @@ class ControladorSQLite(context: Context) {
             while (cursor.moveToNext()) {
                 // Obtener los valores de las columnas
                 val score = cursor.getInt(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_SCORE))
-                val dateLong = cursor.getLong(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DATE))
-                val dateString = Date(dateLong).toString()
+                val dateString = cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DATE))
 
                 items.add("$score - $dateString")
                 Log.d("SQLite", "READ: Fila leída -> Score=$score, Date=$dateString")
@@ -90,20 +89,20 @@ class ControladorSQLite(context: Context) {
 
         // Actualizar el registro con la fecha más alta (el último insertado)
         //Buscar la fecha más reciente
-        var fechaMasReciente: Long? = null
+        var fechaMasReciente: String? = null
         val queryMaxDate = "SELECT MAX(${FeedReaderContract.FeedEntry.COLUMN_NAME_DATE}) FROM ${FeedReaderContract.FeedEntry.TABLE_NAME}"
         // Esto lo que hace es buscar la fecha más alta de la tabla de la base de datos y lo almacena en fechaMasReciente
         db.rawQuery(queryMaxDate, null).use { cursor ->
             // Si hay resultados, obtener la fecha
             if (cursor.moveToFirst()) {
-                fechaMasReciente = cursor.getLong(0)
+                fechaMasReciente = cursor.getString(0)
             }
         }
 
         if (fechaMasReciente != null) {
             //Actualizar donde la fecha coincida
             val selection = "${FeedReaderContract.FeedEntry.COLUMN_NAME_DATE} = ?"
-            val selectionArgs = arrayOf(fechaMasReciente.toString())
+            val selectionArgs = arrayOf(fechaMasReciente)
 
             // Actualizar el registro
             val count = db.update(
